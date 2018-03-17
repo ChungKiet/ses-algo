@@ -12,23 +12,37 @@ INCDIR = ./include/
 OBJDIR = ./obj/
 INCOPT = -I./include
 CFLAGS = $(INCOPT)
-LFLAGS =
+LFLAGS = -lpthread
 
 .PHONY: all clean makeobjdir
 all: makeobjdir main.o \
-	timevec.o sentvec.o
+	timevec.o sentvec.o \
+	threads.o logs.o config.o ses.o
 	$(CC) $(LFLAGS) $(OBJDIR)main.o \
-		$(OBJDIR)timevec.o $(OBJDIR)sentvec.o \
+		$(OBJDIR)timevec.o $(OBJDIR)sentvec.o $(OBJDIR)threads.o \
+		$(OBJDIR)logs.o $(OBJDIR)config.o $(OBJDIR)ses.o \
 		-o 1512284
 
 main.o: main.c $(INCDIR)defs.h
 	$(CC) $(CFLAGS) -c main.c -o $(OBJDIR)main.o
 
-timevec.o: timevec.c $(INCDIR)timevec.h
+timevec.o: timevec.c $(INCDIR)defs.h $(INCDIR)timevec.h
 	$(CC) $(CFLAGS) -c timevec.c -o $(OBJDIR)timevec.o
 
-sentvec.o: sentvec.c $(INCDIR)sentvec.h $(INCDIR)defs.h
+sentvec.o: sentvec.c $(INCDIR)defs.h $(INCDIR)sentvec.h $(INCDIR)timevec.h
 	$(CC) $(CFLAGS) -c sentvec.c -o $(OBJDIR)sentvec.o
+
+threads.o: threads.c $(INCDIR)defs.h
+	$(CC) $(CFLAGS) -c threads.c -o $(OBJDIR)threads.o
+
+logs.o: logs.c $(INCDIR)defs.h
+	$(CC) $(CFLAGS) -c logs.c -o $(OBJDIR)logs.o
+
+config.o: config.c $(INCDIR)defs.h
+	$(CC) $(CFLAGS) -c config.c -o $(OBJDIR)config.o
+
+ses.o: ses.c $(INCDIR)defs.h
+	$(CC) $(CFLAGS) -c ses.c -o $(OBJDIR)ses.o
 
 makeobjdir:
 	mkdir -p obj

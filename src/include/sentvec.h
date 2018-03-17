@@ -11,40 +11,29 @@
 #ifndef __SENTVEC_H__
 #define __SENTVEC_H__
 
-#include "timevec.h"
-
-/*
- * Sent message vector is implemented as a linked list
- * where each node contains a process identifier
- * and a timestamp vector of lastest message sent by this process
- */
-typedef struct sentnode {
-	int proc; /* process identifier */
-	timevec_t timestamp;
-	struct sentnode *next;
-} sentnode_t;
-
-typedef struct sentvec {
-	int proc;
-	sentnode_t *root; /* linked list */
-} sentvec_t;
+#include "defs.h"
 
 /*
  * Initialize a sent messages vector for _process_
  * with 0 element
  * Return 1 on success or -1 on error
  */
-int sv_init(sentvec_t *dst, int process);
+int sv_init(sentvec_t *dst);
 
 void sv_free(sentvec_t *dst);
 
 /*
  * Construct a sent messages vector from string _src_
- * Return process id on success or -1 on error
+ * Return size on success or -1 on error
  */
 int sv_construct(sentvec_t *dst, const char *src);
 
-void sv_tostring(char *dst, const sentvec_t *src);
+/*
+ * Convert vector to string
+ * Return number of characters on success
+ * or -1 on error
+ */
+int sv_tostring(char *dst, const sentvec_t *src);
 
 /*
  * Search for a timestamp vector of process _proc_ from sent vector

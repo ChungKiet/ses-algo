@@ -32,13 +32,29 @@ void tv_free(timevec_t *dst)
 	free(dst->vt);
 }
 
-int tv_construct(timevec_t *dst, int size, const char *src)
+int tv_construct(timevec_t *dst, const char *src)
 {
-	return -1;
+	if (dst == NULL || dst->sz < 0)
+		return -1;
+	for (int i = 0; i < dst->sz; i++) {
+		char *endptr;
+		dst->vt[i] = strtol(src, &endptr, 0);
+		src = endptr;
+	}
+	return dst->sz;
 }
 
-void tv_tostring(char *dst, const timevec_t *src)
+int tv_tostring(char *dst, const timevec_t *src)
 {
+	if (dst == NULL || src == NULL)
+		return -1;
+	int count = 0;
+	for (int i = 0; i < src->sz; i++) {
+		int cp = sprintf(dst, "%d ", src->vt[i]);
+		count += cp;
+		dst   += cp;
+	}
+	return count;
 }
 
 int tv_get(const timevec_t *src, int pos)

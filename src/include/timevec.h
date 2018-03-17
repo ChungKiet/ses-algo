@@ -11,12 +11,8 @@
 #ifndef __TIMEVEC_H__
 #define __TIMEVEC_H__
 
-typedef struct timevec {
-	int  sz; /* size (i.e. number of processes in system) */
-	int *vt;
-} timevec_t, vectorclock_t; /* vector clock is the same as timestamp vector */
+#include "defs.h"
 
-/* Considered results of comparing two vectors */
 typedef enum {
 	TV_DIFF, /* Two vectors are different (in size) */
 	TV_GREQ, /* Greater or equal */
@@ -35,9 +31,14 @@ void tv_free(timevec_t *dst);
  * Construct a timestamp vector whose values are extracted from _src_
  * Return size on success or -1 on error
  */
-int tv_construct(timevec_t *dst, int size, const char *src);
+int tv_construct(timevec_t *dst, const char *src);
 
-void tv_tostring(char *dst, const timevec_t *src);
+/*
+ * Convert a timestamp vector to string
+ * Return number of characters on success
+ * or -1 on error
+ */
+int tv_tostring(char *dst, const timevec_t *src);
 
 /*
  * Return current value at _pos_
