@@ -29,13 +29,13 @@ main.o: main.c $(INCDIR)defs.h
 timevec.o: timevec.c $(INCDIR)defs.h $(INCDIR)timevec.h
 	$(CC) $(CFLAGS) -c timevec.c -o $(OBJDIR)timevec.o
 
-sentvec.o: sentvec.c $(INCDIR)defs.h $(INCDIR)sentvec.h $(INCDIR)timevec.h
+sentvec.o: sentvec.c $(INCDIR)defs.h $(INCDIR)sentvec.h timevec.o
 	$(CC) $(CFLAGS) -c sentvec.c -o $(OBJDIR)sentvec.o
 
-threads.o: threads.c $(INCDIR)defs.h
+threads.o: threads.c $(INCDIR)defs.h $(INCDIR)threads.h sentvec.o logs.o
 	$(CC) $(CFLAGS) -c threads.c -o $(OBJDIR)threads.o
 
-logs.o: logs.c $(INCDIR)defs.h
+logs.o: logs.c $(INCDIR)defs.h $(INCDIR)logs.h
 	$(CC) $(CFLAGS) -c logs.c -o $(OBJDIR)logs.o
 
 config.o: config.c $(INCDIR)defs.h

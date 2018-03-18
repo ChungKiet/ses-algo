@@ -13,6 +13,7 @@
 
 #include "defs.h"
 
+/* Considered results of comparing two vectors */
 typedef enum {
 	TV_DIFF, /* Two vectors are different (in size) */
 	TV_GREQ, /* Greater or equal */

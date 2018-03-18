@@ -11,7 +11,9 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
+#ifndef NULL
 #define NULL 0
+#endif
 
 typedef struct host {
 	char ipv4[16];
@@ -23,7 +25,6 @@ typedef struct timevec {
 	int *vt;
 } timevec_t, vectorclock_t; /* vector clock is the same as timestamp vector */
 
-/* Considered results of comparing two vectors */
 /*
  * Sent message vector is implemented as a linked list
  * where each node contains a process identifier

@@ -10,4 +10,19 @@
  */
 #ifndef __LOGS_H__
 #define __LOGS_H__
+
+#include <stdio.h>
+
+FILE *logfd;
+void logs_init(const char *filename);
+void logs_exit();
+
+void term_errexit(const char *reason);
+void term_delivered();
+void term_delayed();
+
+void logs_errexit(const char *reason);
+void logs_delivered();
+void logs_delayed();
+
 #endif

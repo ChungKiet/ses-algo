@@ -10,4 +10,22 @@
  */
 #ifndef __THREADS_H__
 #define __THREADS_H__
+
+typedef struct args {
+	int  proc;
+	char ipv4[16];
+	int  port;
+	int  nmsg; /* number of messages */
+	int  rate; /* messages per minutes */
+} threadargs_t;
+
+/*
+ * entry point for new messages sender thread
+ * return NULL on error
+ * or an address to a dynamically allocated integer
+ * contains number of messages sent on success
+ * this address SHOULD be freed later to avoid memory leak
+ */
+void *start_sender(void *args_addr);
+
 #endif
