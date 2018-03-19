@@ -23,6 +23,9 @@ host_t       *proc_list; /* addresses of all processes in the system */
 int           nmsg;      /* number of messages to send to each other process */
 int           rmin;      /* min send rate (messages per minute) */
 int           rmax;      /* max send rate (messages per minute) */
+char          log_fname[255]; /* logs file name */
+int           lport;     /* listening port   */
+int           servfd;    /* listening socket */
 pthread_rwlock_t lock_n    = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_id   = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_vect = PTHREAD_RWLOCK_INITIALIZER;

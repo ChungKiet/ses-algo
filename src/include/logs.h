@@ -18,11 +18,11 @@ void logs_init(const char *filename);
 void logs_exit();
 
 void term_errexit(const char *reason);
-void term_delivered();
-void term_delayed();
+void term_delivered(int proc, const char *msg, int type);
+void term_delayed(int proc);
 
 void logs_errexit(const char *reason);
-void logs_delivered();
-void logs_delayed();
+void logs_delivered(int proc, const char *msg, int type);
+void logs_delayed(int proc);
 
 #endif

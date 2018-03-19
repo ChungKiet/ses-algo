@@ -30,9 +30,9 @@ void tv_free(timevec_t *dst);
 
 /*
  * Construct a timestamp vector whose values are extracted from _src_
- * Return size on success or -1 on error
+ * Return next position on success or NULL on error
  */
-int tv_construct(timevec_t *dst, const char *src);
+char *tv_construct(timevec_t *dst, char *src);
 
 /*
  * Convert a timestamp vector to string

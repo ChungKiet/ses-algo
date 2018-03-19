@@ -24,9 +24,9 @@ void sv_free(sentvec_t *dst);
 
 /*
  * Construct a sent messages vector from string _src_
- * Return size on success or -1 on error
+ * Return next position on success or NULL on error
  */
-int sv_construct(sentvec_t *dst, const char *src);
+char *sv_construct(sentvec_t *dst, char *src);
 
 /*
  * Convert vector to string

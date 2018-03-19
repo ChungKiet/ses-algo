@@ -39,10 +39,11 @@ threads.o: threads.c $(INCDIR)defs.h $(INCDIR)threads.h \
 logs.o: logs.c $(INCDIR)defs.h $(INCDIR)logs.h
 	$(CC) $(CFLAGS) -c logs.c -o $(OBJDIR)logs.o
 
-config.o: config.c $(INCDIR)defs.h
+config.o: config.c $(INCDIR)defs.h $(INCDIR)config.h
 	$(CC) $(CFLAGS) -c config.c -o $(OBJDIR)config.o
 
-ses.o: ses.c $(INCDIR)defs.h
+ses.o: ses.c $(INCDIR)defs.h $(INCDIR)ses.h \
+	timevec.o sentvec.o logs.o
 	$(CC) $(CFLAGS) -c ses.c -o $(OBJDIR)ses.o
 
 makeobjdir:

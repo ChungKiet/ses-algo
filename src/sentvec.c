@@ -38,21 +38,21 @@ void sv_free(sentvec_t *dst)
 	}
 }
 
-int sv_construct(sentvec_t *dst, const char *src)
+char *sv_construct(sentvec_t *dst, char *src)
 {
 	if (dst == NULL || src == NULL)
-		return -1;
+		return NULL;
 	char *endptr;
 	dst->size = strtol(src, &endptr, 0);
 	src = endptr;
 	for (int i = 0; i < dst->size; i++) {
 		sentnode_t *new_node = (sentnode_t *)malloc(sizeof(sentnode_t));
 		if (new_node == NULL)
-			return -1;
+			return NULL;
 		new_node->proc = strtol(src, &endptr, 0);
 		src = endptr;
 		if (tv_init(&new_node->timestamp, n, 1) == -1)
-			return -1;
+			return NULL;
 		for (int j = 0; j < n; j++) {
 			new_node->timestamp.vt[j] = strtol(src, &endptr, 0);
 			src = endptr;
@@ -60,7 +60,7 @@ int sv_construct(sentvec_t *dst, const char *src)
 		new_node->next = dst->root;
 		dst->root = new_node;
 	}
-	return dst->size;
+	return src;
 }
 
 int sv_tostring(char *dst, const sentvec_t *src)

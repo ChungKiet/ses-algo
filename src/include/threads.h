@@ -12,6 +12,7 @@
 #define __THREADS_H__
 
 typedef struct args {
+	int  proc;
 	char ipv4[16];
 	int  port;
 	int  nmsg; /* number of messages */

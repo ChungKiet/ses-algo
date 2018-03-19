@@ -43,6 +43,7 @@ void threads_init()
 	for (int i = 0; i < nn; i++)
 		if (i != dd) {
 			arr[i] = (threadargs_t *)malloc(sizeof(threadargs_t));
+			arr[i]->proc = i;
 			strncpy(arr[i]->ipv4, proc_list[i].ipv4, 16);
 			arr[i]->port = proc_list[i].port;
 			arr[i]->nmsg = nmsg;
@@ -78,6 +79,19 @@ void *start_sender(void *args_addr)
 
 	/* send messages */
 	for (int i = 0; i < args->nmsg; i++) {
+		/* update local vector clock */
+		pthread_rwlock_rdlock(&lock_id);
+		int dd = id;
+		pthread_rwlock_unlock(&lock_id);
+
+		pthread_rwlock_rdlock(&lock_time);
+		int oldv = tv_get(&time_curr, dd);
+		pthread_rwlock_unlock(&lock_time);
+
+		pthread_rwlock_wrlock(&lock_time);
+		tv_set(&time_curr, dd, oldv + 1);
+		pthread_rwlock_unlock(&lock_time);
+
 		/* establish connection */
 		int sockfd;
 		struct sockaddr_in serv;
@@ -113,6 +127,18 @@ void *start_sender(void *args_addr)
 		pthread_rwlock_unlock(&lock_vect);
 
 		buf[msg_len] = '\0';
+
+		/* update sent message vector */
+		pthread_rwlock_rdlock(&lock_time);
+		pthread_rwlock_wrlock(&lock_vect);
+		if (sv_search(&vect_curr, args->proc) == NULL) {
+			sv_add(&vect_curr, &time_curr, args->proc);
+		}
+		else {
+			sv_update(&vect_curr, &time_curr, args->proc);
+		}
+		pthread_rwlock_unlock(&lock_time);
+		pthread_rwlock_unlock(&lock_vect);
 
 		/* send message */
 		if (send(sockfd, buf, msg_len + 1, 0) <= msg_len) {
