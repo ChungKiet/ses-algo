@@ -23,7 +23,7 @@ all: makeobjdir main.o \
 		$(OBJDIR)logs.o $(OBJDIR)config.o $(OBJDIR)ses.o \
 		-o 1512284
 
-main.o: main.c $(INCDIR)defs.h
+main.o: main.c $(INCDIR)defs.h config.o threads.o ses.o
 	$(CC) $(CFLAGS) -c main.c -o $(OBJDIR)main.o
 
 timevec.o: timevec.c $(INCDIR)defs.h $(INCDIR)timevec.h
@@ -32,7 +32,8 @@ timevec.o: timevec.c $(INCDIR)defs.h $(INCDIR)timevec.h
 sentvec.o: sentvec.c $(INCDIR)defs.h $(INCDIR)sentvec.h timevec.o
 	$(CC) $(CFLAGS) -c sentvec.c -o $(OBJDIR)sentvec.o
 
-threads.o: threads.c $(INCDIR)defs.h $(INCDIR)threads.h sentvec.o logs.o
+threads.o: threads.c $(INCDIR)defs.h $(INCDIR)threads.h \
+	sentvec.o timevec.o logs.o
 	$(CC) $(CFLAGS) -c threads.c -o $(OBJDIR)threads.o
 
 logs.o: logs.c $(INCDIR)defs.h $(INCDIR)logs.h

@@ -11,6 +11,8 @@
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
+#include <pthread.h>
+
 #ifndef NULL
 #define NULL 0
 #endif
@@ -23,7 +25,7 @@ typedef struct host {
 typedef struct timevec {
 	int  sz; /* size (i.e. number of processes in system) */
 	int *vt;
-} timevec_t, vectorclock_t; /* vector clock is the same as timestamp vector */
+} timevec_t, vectorclock_t;
 
 /*
  * Sent message vector is implemented as a linked list
@@ -45,7 +47,14 @@ typedef struct sentvec {
 extern int           n;
 extern int           id;
 extern host_t       *proc_list;
+extern int           nmsg;
+extern int           rmin;
+extern int           rmax;
 extern sentvec_t     vect_curr;
 extern vectorclock_t time_curr;
+extern pthread_rwlock_t lock_n;
+extern pthread_rwlock_t lock_id;
+extern pthread_rwlock_t lock_vect;
+extern pthread_rwlock_t lock_time;
 
 #endif

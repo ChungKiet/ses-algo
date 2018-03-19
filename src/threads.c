@@ -10,6 +10,7 @@
  */
 #include "threads.h"
 #include "sentvec.h"
+#include "timevec.h"
 #include "logs.h"
 #include "defs.h"
 
@@ -24,6 +25,35 @@
 #include <arpa/inet.h>
 
 #define BUF_SIZE 100000
+
+void threads_init()
+{
+	pthread_rwlock_rdlock(&lock_n);
+	volatile int nn = n;
+	pthread_rwlock_unlock(&lock_n);
+
+	pthread_rwlock_rdlock(&lock_id);
+	volatile int dd = id;
+	pthread_rwlock_unlock(&lock_id);
+
+	pthread_t     trr[nn];
+	threadargs_t *arr[nn];
+
+	srand(time(0));
+	for (int i = 0; i < nn; i++)
+		if (i != dd) {
+			arr[i] = (threadargs_t *)malloc(sizeof(threadargs_t));
+			strncpy(arr[i]->ipv4, proc_list[i].ipv4, 16);
+			arr[i]->port = proc_list[i].port;
+			arr[i]->nmsg = nmsg;
+			arr[i]->rate = rmin + (rand() % (rmax - rmin + 1));
+
+			if (pthread_create(&trr[i], NULL, &start_sender, arr[i]) != 0) {
+				logs_errexit("Cannot create a thread.");
+				term_errexit("Cannot create a thread.");
+			}
+		}
+}
 
 void *start_sender(void *args_addr)
 {
@@ -54,29 +84,40 @@ void *start_sender(void *args_addr)
 		memset(&serv, 0, sizeof(serv));
 		serv.sin_family = AF_INET;
 		if (inet_pton(AF_INET, args->ipv4, &serv.sin_addr) <= 0) {
-			term_errexit("Invalid recipient IP address.");
 			logs_errexit("Invalid recipient IP address.");
+			term_errexit("Invalid recipient IP address.");
 		}
 		serv.sin_port = htons(args->port);
 		if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-			term_errexit("Cannot create a socket.");
 			logs_errexit("Cannot create a socket.");
+			term_errexit("Cannot create a socket.");
 		}
 		if (connect(sockfd, (struct sockaddr *)&serv, sizeof(serv)) < 0) {
-			term_errexit("Cannot connect to a socket.");
 			logs_errexit("Cannot connect to a socket.");
+			term_errexit("Cannot connect to a socket.");
 		}
 
 		/* construct message */
 		char *buf = (char *)malloc(BUF_SIZE);
-		int msg_len = sprintf(buf, "Message %d\r\n\r\n%d ", i, args->proc);
+
+		pthread_rwlock_rdlock(&lock_id);
+		int msg_len = sprintf(buf, "Message %d\r\n\r\n%d ", i, id);
+		pthread_rwlock_unlock(&lock_id);
+
+		pthread_rwlock_rdlock(&lock_time);
+		msg_len += tv_tostring(buf + msg_len, &time_curr);
+		pthread_rwlock_unlock(&lock_time);
+
+		pthread_rwlock_rdlock(&lock_vect);
 		msg_len += sv_tostring(buf + msg_len, &vect_curr);
+		pthread_rwlock_unlock(&lock_vect);
+
 		buf[msg_len] = '\0';
 
 		/* send message */
 		if (send(sockfd, buf, msg_len + 1, 0) <= msg_len) {
-			term_errexit("Cannot send data to a socket.");
 			logs_errexit("Cannot send data to a socket.");
+			term_errexit("Cannot send data to a socket.");
 		}
 
 		/* shutdown connection */

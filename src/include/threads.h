@@ -12,7 +12,6 @@
 #define __THREADS_H__
 
 typedef struct args {
-	int  proc;
 	char ipv4[16];
 	int  port;
 	int  nmsg; /* number of messages */
@@ -27,5 +26,10 @@ typedef struct args {
  * this address SHOULD be freed later to avoid memory leak
  */
 void *start_sender(void *args_addr);
+
+/*
+ * spawn new threads to send messages
+ */
+void  threads_init();
 
 #endif

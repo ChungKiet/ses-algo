@@ -8,3 +8,12 @@
  *
  * Module: SES Algorithm
  */
+#include "ses.h"
+
+void ses_init()
+{
+}
+
+void ses_loop()
+{
+}

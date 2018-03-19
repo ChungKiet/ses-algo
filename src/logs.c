@@ -26,8 +26,8 @@ void logs_exit()
 
 void term_errexit(const char *reason)
 {
-	fprintf(stdout, "An error occured: %s\n", reason);
-	fprintf(stdout, "Program exited!\n");
+	fprintf(stderr, "An error occured: %s\n", reason);
+	fprintf(stderr, "Program exited!\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -35,7 +35,6 @@ void logs_errexit(const char *reason)
 {
 	fprintf(logfd, "An error occured: %s\n", reason);
 	fprintf(logfd, "Program exited!\n");
-	exit(EXIT_FAILURE);
 }
 
 void term_delayed(int proc)
