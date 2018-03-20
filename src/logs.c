@@ -16,7 +16,7 @@
 
 void logs_init(const char *filename)
 {
-	logfd = fopen(filename, "r");
+	logfd = fopen(filename, "w");
 }
 
 void logs_exit()
