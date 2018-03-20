@@ -30,6 +30,7 @@ pthread_rwlock_t lock_n    = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_id   = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_vect = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_time = PTHREAD_RWLOCK_INITIALIZER;
+pthread_mutex_t  lock_log  = PTHREAD_MUTEX_INITIALIZER;
 
 int main(int argc, char **argv)
 {

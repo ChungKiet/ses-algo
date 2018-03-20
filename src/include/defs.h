@@ -59,5 +59,6 @@ extern pthread_rwlock_t lock_n;
 extern pthread_rwlock_t lock_id;
 extern pthread_rwlock_t lock_vect;
 extern pthread_rwlock_t lock_time;
+extern pthread_mutex_t  lock_log;
 
 #endif
