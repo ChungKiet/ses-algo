@@ -11,7 +11,20 @@ CC     = gcc
 INCDIR = ./include/
 OBJDIR = ./obj/
 INCOPT = -I./include
+CFLAGS = $(INCOPT) -g -D _TEST_DELAY_MESSAGE_
+ifeq ($(delay), true)
+ifeq ($(debug), true)
+CFLAGS = $(INCOPT) -g -D _TEST_DELAY_MESSAGE_
+else
+CFLAGS = $(INCOPT) -D _TEST_DELAY_MESSAGE_
+endif
+else
+ifeq ($(debug), true)
+CFLAGS = $(INCOPT) -g
+else
 CFLAGS = $(INCOPT)
+endif
+endif
 LFLAGS = -lpthread
 
 .PHONY: all clean makeobjdir

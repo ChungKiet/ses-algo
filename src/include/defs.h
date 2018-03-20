@@ -55,6 +55,7 @@ extern int           lport;
 extern int           servfd;
 extern sentvec_t     vect_curr;
 extern vectorclock_t time_curr;
+extern pthread_t        trr[1024];
 extern pthread_rwlock_t lock_n;
 extern pthread_rwlock_t lock_id;
 extern pthread_rwlock_t lock_vect;

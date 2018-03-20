@@ -49,6 +49,8 @@ void config_get_from_file(const char *filename)
 		}
 		if ((oc = strstr(line, "id:")) != NULL) {
 			sscanf(line + 3, "%d", &id);
+			lport += id;
+			sprintf(log_fname, "process_%d.log", id);
 		}
 		if ((oc = strstr(line, "nmsg:")) != NULL) {
 			sscanf(line + 5, "%d", &nmsg);

@@ -19,6 +19,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/select.h>
@@ -116,25 +117,26 @@ void ses_loop()
 					break;
 				}
 
-			/* check for client socks */
-			for (int i = 0; i < n_client; i++) {
-				int fd = client_sock[i];
-				if (fd == 0) continue;
+		}
 
-				if (FD_ISSET(fd, &readfds)) {
-					int num_recv = recv(fd, buf, BUF_SIZE, 0);
-					if (num_recv > 0) { /* new message */
-						buf[num_recv] = '\0'; /* ensure null terminated */
-						ses_accept();
-					}
-					else if (num_recv == 0) { /* connection closed */
-						close(fd);
-						client_sock[i] = 0;
-					}
-					else {
-						logs_errexit("Cannot receive data form socket.");
-						term_errexit("Cannot receive data form socket.");
-					}
+		/* check for client socks */
+		for (int i = 0; i < n_client; i++) {
+			int fd = client_sock[i];
+			if (fd == 0) continue;
+
+			if (FD_ISSET(fd, &readfds)) {
+				int num_recv = recv(fd, buf, BUF_SIZE, 0);
+				if (num_recv > 0) { /* new message */
+					buf[num_recv] = '\0'; /* ensure null terminated */
+					ses_accept();
+				}
+				else if (num_recv == 0) { /* connection closed */
+					close(fd);
+					client_sock[i] = 0;
+				}
+				else {
+					logs_errexit("Cannot receive data form socket.");
+					term_errexit("Cannot receive data form socket.");
 				}
 			}
 		}
@@ -283,6 +285,11 @@ void ses_accept()
 			new_node->timestamp = timestamp;
 			new_node->next = wait;
 			wait           = new_node;
+
+			logs_delayed(sender);
+			term_delayed(sender);
+
+			check_buffer();
 		}
 	}
 }

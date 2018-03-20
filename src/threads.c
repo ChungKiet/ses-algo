@@ -26,6 +26,21 @@
 
 #define BUF_SIZE 100000
 
+/* In a localhost enviroment messages are sent almost immediately
+ * therefore we cannot test the delayed message functionality.
+ * In order to test this, for each mes. we create a new thread that wait
+ * a random period of time
+ * before actually send the message.
+ * To active this behavior, define _TEST_DELAY_MESSAGE_ at compile time
+ */
+void *delayed_send(void *args);
+typedef struct {
+	int sockfd;
+	char *buf;
+	int msg_len;
+} sendargs_t;
+void  nodelay_send(int sockfd, char *buf, int msg_len);
+
 void threads_init()
 {
 	pthread_rwlock_rdlock(&lock_n);
@@ -36,7 +51,6 @@ void threads_init()
 	volatile int dd = id;
 	pthread_rwlock_unlock(&lock_id);
 
-	pthread_t     trr[nn];
 	threadargs_t *arr[nn];
 
 	srand(time(0));
@@ -65,20 +79,22 @@ void *start_sender(void *args_addr)
 	if (args->nmsg == 0 || args->rate == 0)
 		return NULL;
 
-	/* return value */
-	int *retval = (int *)malloc(sizeof(int));
-	*retval = 0;
-
-	struct timespec sleep_interval;
-	sleep_interval.tv_sec  = 60 / args->rate;
+	struct timespec sleep_interval; sleep_interval.tv_sec  = 60 / args->rate;
 	int sec_left = 60 - args->rate * sleep_interval.tv_sec;
 	if (sec_left == 0)
 		sleep_interval.tv_nsec = 0;
 	else
 		sleep_interval.tv_nsec = 1000000000 * sec_left / args->rate;
 
+#ifdef _TEST_DELAY_MESSAGE_
+	pthread_t st[100000];
+	int cnt = 0;
+#endif
+
 	/* send messages */
 	for (int i = 0; i < args->nmsg; i++) {
+		nanosleep(&sleep_interval, NULL);
+
 		/* update local vector clock */
 		pthread_rwlock_rdlock(&lock_id);
 		int dd = id;
@@ -140,18 +156,55 @@ void *start_sender(void *args_addr)
 		pthread_rwlock_unlock(&lock_time);
 		pthread_rwlock_unlock(&lock_vect);
 
-		/* send message */
-		if (send(sockfd, buf, msg_len + 1, 0) <= msg_len) {
-			logs_errexit("Cannot send data to a socket.");
-			term_errexit("Cannot send data to a socket.");
+#ifdef _TEST_DELAY_MESSAGE_
+		sendargs_t *a = (sendargs_t *)malloc(sizeof(sendargs_t));
+		if (a == NULL) {
+			logs_errexit("Cannot allocate memory.");
+			term_errexit("Cannot allocate memory.");
 		}
-
-		/* shutdown connection */
-		free(buf);
-		shutdown(sockfd, 2);
-
-		nanosleep(&sleep_interval, NULL);
+		a->sockfd  = sockfd;
+		a->buf     = buf;
+		a->msg_len = msg_len;
+		pthread_create(&st[cnt++], NULL, &delayed_send, (void *)a);
+#else
+		nodelay_send(sockfd, buf, msg_len);
+#endif
 	}
 
-	return (void *)retval;
+#ifdef _TEST_DELAY_MESSAGE_
+	for (int i = 0; i < cnt; i++)
+		pthread_join(st[i], NULL);
+#endif
+	pthread_exit(NULL);
+}
+
+void nodelay_send(int sockfd, char *buf, int msg_len)
+{
+	/* send message */
+	if (send(sockfd, buf, msg_len + 1, 0) <= msg_len) {
+		logs_errexit("Cannot send data to a socket.");
+		term_errexit("Cannot send data to a socket.");
+	}
+
+	/* shutdown connection */
+	free(buf);
+	shutdown(sockfd, SHUT_RDWR);
+}
+
+void *delayed_send(void *args)
+{
+	sendargs_t *arg = (sendargs_t *)args;
+	struct timespec delay;
+	delay.tv_nsec = 0;
+	delay.tv_sec  = rand() % 4;
+	nanosleep(&delay, NULL);
+	/* send message */
+	if (send(arg->sockfd, arg->buf, arg->msg_len + 1, 0) <= arg->msg_len) {
+		logs_errexit("Cannot send data to a socket.");
+		term_errexit("Cannot send data to a socket.");
+	}
+	/* shutdown connection */
+	free(arg->buf);
+	shutdown(arg->sockfd, SHUT_RDWR);
+	pthread_exit(NULL);
 }

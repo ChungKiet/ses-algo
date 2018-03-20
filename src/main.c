@@ -13,6 +13,8 @@
 #include "threads.h"
 #include "ses.h"
 
+#include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 
 int           n;  /* number of processes in system */
@@ -26,6 +28,7 @@ int           rmax;      /* max send rate (messages per minute) */
 char          log_fname[255]; /* logs file name */
 int           lport;     /* listening port   */
 int           servfd;    /* listening socket */
+pthread_t        trr[1024]; /* thread id array */
 pthread_rwlock_t lock_n    = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_id   = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_vect = PTHREAD_RWLOCK_INITIALIZER;
@@ -40,6 +43,15 @@ int main(int argc, char **argv)
 
 	/* Initialize SES enviroments and setting up listen socket */
 	ses_init();
+
+	/* wait for user type *start* to begin */
+	char buf[255];
+	while (1) {
+		printf("Type \"start\" to begin: ");
+		scanf("%s", buf);
+		if (strncmp(buf, "start", 5) == 0)
+			break;
+	}
 
 	/* Spawn threads to send messages */
 	threads_init();
