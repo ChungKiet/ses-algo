@@ -108,7 +108,7 @@ int sv_add(sentvec_t *dst, const timevec_t *src, int proc)
 	new_node->proc = proc;
 	if (tv_init(&new_node->timestamp, n, 1) == -1)
 		return -1;
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < src->sz; i++) {
 		int val = tv_get(src, i);
 		if (val == -1)
 			return -1;
@@ -129,6 +129,27 @@ int sv_update(sentvec_t *dst, timevec_t *src, int proc)
 	while (node) {
 		if (node->proc == proc) {
 			return tv_combine(&node->timestamp, src);
+		}
+		node = node->next;
+	}
+	return -1;
+}
+
+int sv_override(sentvec_t *dst, timevec_t *src, int proc)
+{
+	if (proc < 0 || dst == NULL || src == NULL || src->vt == NULL)
+		return -1;
+	sentnode_t *node = dst->root;
+	while (node) {
+		if (node->proc == proc) {
+			for (int i = 0; i < src->sz; i++) {
+				int val = tv_get(src, i);
+				if (val == -1)
+					return -1;
+				if (tv_set(&node->timestamp, i, val) == -1)
+					return -1;
+			}
+			return 1;
 		}
 		node = node->next;
 	}

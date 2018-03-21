@@ -66,11 +66,11 @@ void config_get_from_file(const char *filename)
 			sscanf(line + 5, "%d", &rmax);
 		}
 		if ((oc = strstr(line, "lport:")) != NULL) {
-			logdef = 1;
+			prtdef = 1;
 			sscanf(line + 6, "%d", &lport);
 		}
 		if ((oc = strstr(line, "log:")) != NULL) {
-			prtdef = 1;
+			logdef = 1;
 			char *nl = strrchr(line, '\n');
 			if (nl) {
 				strncpy(log_fname, line + 4, nl - line - 4);

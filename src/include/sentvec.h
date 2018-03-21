@@ -57,4 +57,10 @@ int sv_add(sentvec_t *dst, const timevec_t *src, int proc);
  */
 int sv_update(sentvec_t *dst, timevec_t *src, int proc);
 
+/*
+ * Override timestamp of process _proc_ in sent vector with timestamp _src_
+ * Return 1 on success or -1 on error
+ */
+int sv_override(sentvec_t *dst, timevec_t *src, int proc);
+
 #endif

@@ -108,7 +108,7 @@ void term_delivered(int proc, const char *msg, int type)
 		fprintf(stdout, "----DELIVERED immediately! Content: %s\n", msg);
 	}
 	else { /* from buffer */
-		fprintf(stdout, "----DELIVERED a message of process #%d", proc);
+		fprintf(stdout, "++++DELIVERED a message of process #%d", proc);
 		fprintf(stdout, " from buffer. Content: %s\n", msg);
 	}
 }

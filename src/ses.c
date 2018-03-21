@@ -91,8 +91,6 @@ void ses_loop()
 			if (client_sock[i] > maxfd)
 				maxfd = client_sock[i];
 		}
-		int lvl = 0;
-		check_buffer(++lvl);
 		/* wait for activities from fd */
 		int act = select(maxfd + 1, &readfds, NULL, NULL, NULL);
 		if (act < 0 && errno != EINTR) {
@@ -206,47 +204,14 @@ void ses_accept()
 	pthread_rwlock_unlock(&lock_id);
 	timevec_t *r = sv_search(vect, dd);
 	if (r == NULL) { /* no earlier message sent, deliver */
-		/* update sent vector */
-		sentnode_t *node = vect->root;
-		while (node) {
-			pthread_rwlock_rdlock(&lock_vect);
-			timevec_t *rslt = sv_search(&vect_curr, node->proc);
-			pthread_rwlock_unlock(&lock_vect);
-
-			pthread_rwlock_wrlock(&lock_vect);
-			if (rslt == NULL) {
-				sv_add(&vect_curr, &node->timestamp, node->proc);
-			}
-			else {
-				sv_update(&vect_curr, &node->timestamp, node->proc);
-			}
-			pthread_rwlock_unlock(&lock_vect);
-
-			node = node->next;
-		}
-
-		/* update local vector clock */
-		pthread_rwlock_wrlock(&lock_time);
-		tv_combine(&time_curr, timestamp);
-		int t = tv_get(&time_curr, dd);
-		tv_set(&time_curr, dd, t + 1);
-		pthread_rwlock_unlock(&lock_time);
-
 		/* log and console output */
 		logs_delivered(sender, msg, 0, 0, timestamp);
 		term_delivered(sender, msg, 0);
 
-		int lvl = 0;
-		while (check_buffer(++lvl));
-	}
-	else { /* sv_search != NULL, compare to check */
-		pthread_rwlock_rdlock(&lock_time);
-		tv_cmp_rslt rs = tv_compare(&time_curr, r);
-		pthread_rwlock_unlock(&lock_time);
-		if (rs == TV_GREQ) { /* deliver */
-			/* update sent vector */
-			sentnode_t *node = vect->root;
-			while (node) {
+		/* update sent vector */
+		sentnode_t *node = vect->root;
+		while (node) {
+			if (node->proc != dd) {
 				pthread_rwlock_rdlock(&lock_vect);
 				timevec_t *rslt = sv_search(&vect_curr, node->proc);
 				pthread_rwlock_unlock(&lock_vect);
@@ -259,20 +224,57 @@ void ses_accept()
 					sv_update(&vect_curr, &node->timestamp, node->proc);
 				}
 				pthread_rwlock_unlock(&lock_vect);
+			}
+
+			node = node->next;
+		}
+
+		/* update local vector clock */
+		pthread_rwlock_wrlock(&lock_time);
+		int t = tv_get(&time_curr, dd);
+		tv_combine(&time_curr, timestamp);
+		tv_set(&time_curr, dd, t + 1);
+		pthread_rwlock_unlock(&lock_time);
+
+		int lvl = 0;
+		while (check_buffer(++lvl));
+	}
+	else { /* sv_search != NULL, compare to check */
+		pthread_rwlock_rdlock(&lock_time);
+		tv_cmp_rslt rs = tv_compare(&time_curr, r);
+		pthread_rwlock_unlock(&lock_time);
+		if (rs == TV_GREQ) { /* deliver */
+			/* log and console output */
+			logs_delivered(sender, msg, 0, 0, timestamp);
+			term_delivered(sender, msg, 0);
+
+			/* update sent vector */
+			sentnode_t *node = vect->root;
+			while (node) {
+				if (node->proc != dd) {
+					pthread_rwlock_rdlock(&lock_vect);
+					timevec_t *rslt = sv_search(&vect_curr, node->proc);
+					pthread_rwlock_unlock(&lock_vect);
+
+					pthread_rwlock_wrlock(&lock_vect);
+					if (rslt == NULL) {
+						sv_add(&vect_curr, &node->timestamp, node->proc);
+					}
+					else {
+						sv_update(&vect_curr, &node->timestamp, node->proc);
+					}
+					pthread_rwlock_unlock(&lock_vect);
+				}
 
 				node = node->next;
 			}
 
 			/* update local vector clock */
 			pthread_rwlock_wrlock(&lock_time);
-			tv_combine(&time_curr, timestamp);
 			int t = tv_get(&time_curr, dd);
+			tv_combine(&time_curr, timestamp);
 			tv_set(&time_curr, dd, t + 1);
 			pthread_rwlock_unlock(&lock_time);
-
-			/* log and console output */
-			logs_delivered(sender, msg, 0, 0, timestamp);
-			term_delivered(sender, msg, 0);
 
 			int lvl = 0;
 			while (check_buffer(++lvl));
@@ -292,9 +294,6 @@ void ses_accept()
 
 			logs_delayed(sender, timestamp);
 			term_delayed(sender);
-
-			int lvl = 0;
-			while (check_buffer(++lvl));
 		}
 	}
 }
@@ -318,37 +317,38 @@ int check_buffer(int lvl)
 			tv_cmp_rslt rs = tv_compare(&time_curr, r);
 			pthread_rwlock_unlock(&lock_time);
 			if (rs == TV_GREQ) { /* deliver */
+				/* log and console output */
+				logs_delivered(node->sender, node->msg, 1, lvl, node->timestamp);
+				term_delivered(node->sender, node->msg, 1);
+				something_delivered = 1;
+
 				/* update sent vector */
 				sentnode_t *rode = node->vect->root;
 				while (rode) {
-					pthread_rwlock_rdlock(&lock_vect);
-					timevec_t *rslt = sv_search(&vect_curr, rode->proc);
-					pthread_rwlock_unlock(&lock_vect);
+					if (rode->proc != dd) {
+						pthread_rwlock_rdlock(&lock_vect);
+						timevec_t *rslt = sv_search(&vect_curr, rode->proc);
+						pthread_rwlock_unlock(&lock_vect);
 
-					pthread_rwlock_wrlock(&lock_vect);
-					if (rslt == NULL) {
-						sv_add(&vect_curr, &rode->timestamp, rode->proc);
+						pthread_rwlock_wrlock(&lock_vect);
+						if (rslt == NULL) {
+							sv_add(&vect_curr, &rode->timestamp, rode->proc);
+						}
+						else {
+							sv_update(&vect_curr, &rode->timestamp, rode->proc);
+						}
+						pthread_rwlock_unlock(&lock_vect);
 					}
-					else {
-						sv_update(&vect_curr, &rode->timestamp, rode->proc);
-					}
-					pthread_rwlock_unlock(&lock_vect);
 
 					rode = rode->next;
 				}
 
 				/* update local vector clock */
 				pthread_rwlock_wrlock(&lock_time);
-				tv_combine(&time_curr, node->timestamp);
 				int t = tv_get(&time_curr, dd);
+				tv_combine(&time_curr, node->timestamp);
 				tv_set(&time_curr, dd, t + 1);
 				pthread_rwlock_unlock(&lock_time);
-
-				/* log and console output */
-				logs_delivered(node->sender, node->msg, 1, lvl, node->timestamp);
-				term_delivered(node->sender, node->msg, 1);
-
-				something_delivered = 1;
 
 				free(node->msg);
 				free(node->timestamp);

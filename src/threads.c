@@ -79,12 +79,13 @@ void *start_sender(void *args_addr)
 	if (args->nmsg == 0 || args->rate == 0)
 		return NULL;
 
-	struct timespec sleep_interval; sleep_interval.tv_sec  = 60 / args->rate;
+	struct timespec sleep_interval;
+	sleep_interval.tv_sec  = 60 / args->rate;
 	int sec_left = 60 - args->rate * sleep_interval.tv_sec;
 	if (sec_left == 0)
 		sleep_interval.tv_nsec = 0;
 	else
-		sleep_interval.tv_nsec = 1000000000 * sec_left / args->rate;
+		sleep_interval.tv_nsec = 1000000000 / args->rate * sec_left;
 
 #ifdef _TEST_DELAY_MESSAGE_
 	pthread_t st[100000];
@@ -94,19 +95,6 @@ void *start_sender(void *args_addr)
 	/* send messages */
 	for (int i = 0; i <= args->nmsg; i++) {
 		nanosleep(&sleep_interval, NULL);
-
-		/* update local vector clock */
-		pthread_rwlock_rdlock(&lock_id);
-		int dd = id;
-		pthread_rwlock_unlock(&lock_id);
-
-		pthread_rwlock_rdlock(&lock_time);
-		int oldv = tv_get(&time_curr, dd);
-		pthread_rwlock_unlock(&lock_time);
-
-		pthread_rwlock_wrlock(&lock_time);
-		tv_set(&time_curr, dd, oldv + 1);
-		pthread_rwlock_unlock(&lock_time);
 
 		/* establish connection */
 		int sockfd;
@@ -139,27 +127,31 @@ void *start_sender(void *args_addr)
 			msg_len = sprintf(buf, "FIN:SEND\r\n\r\n%d ", id);
 		pthread_rwlock_unlock(&lock_id);
 
-		pthread_rwlock_rdlock(&lock_time);
+		/* update local vector clock */
+		pthread_rwlock_rdlock(&lock_id);
+		int dd = id;
+		pthread_rwlock_unlock(&lock_id);
+
+		pthread_rwlock_wrlock(&lock_time);
+		pthread_rwlock_wrlock(&lock_vect);
+		int oldv = tv_get(&time_curr, dd);
+		tv_set(&time_curr, dd, oldv + 1);
+
 		msg_len += tv_tostring(buf + msg_len, &time_curr);
-		pthread_rwlock_unlock(&lock_time);
 
-		pthread_rwlock_rdlock(&lock_vect);
 		msg_len += sv_tostring(buf + msg_len, &vect_curr);
-		pthread_rwlock_unlock(&lock_vect);
-
-		buf[msg_len] = '\0';
 
 		/* update sent message vector */
-		pthread_rwlock_rdlock(&lock_time);
-		pthread_rwlock_wrlock(&lock_vect);
 		if (sv_search(&vect_curr, args->proc) == NULL) {
 			sv_add(&vect_curr, &time_curr, args->proc);
 		}
 		else {
-			sv_update(&vect_curr, &time_curr, args->proc);
+			sv_override(&vect_curr, &time_curr, args->proc);
 		}
 		pthread_rwlock_unlock(&lock_time);
 		pthread_rwlock_unlock(&lock_vect);
+
+		buf[msg_len] = '\0';
 
 #ifdef _TEST_DELAY_MESSAGE_
 		sendargs_t *a = (sendargs_t *)malloc(sizeof(sendargs_t));
