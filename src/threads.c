@@ -92,7 +92,7 @@ void *start_sender(void *args_addr)
 #endif
 
 	/* send messages */
-	for (int i = 0; i < args->nmsg; i++) {
+	for (int i = 0; i <= args->nmsg; i++) {
 		nanosleep(&sleep_interval, NULL);
 
 		/* update local vector clock */
@@ -129,9 +129,14 @@ void *start_sender(void *args_addr)
 
 		/* construct message */
 		char *buf = (char *)malloc(BUF_SIZE);
+		int msg_len;
 
 		pthread_rwlock_rdlock(&lock_id);
-		int msg_len = sprintf(buf, "Message %d\r\n\r\n%d ", i, id);
+		if (i < args->nmsg)
+			msg_len = sprintf(buf, "Message %d of process %d.\r\n\r\n%d ",
+			                      i + 1, id, id);
+		else
+			msg_len = sprintf(buf, "FIN:SEND\r\n\r\n%d ", id);
 		pthread_rwlock_unlock(&lock_id);
 
 		pthread_rwlock_rdlock(&lock_time);

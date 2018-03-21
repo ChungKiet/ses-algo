@@ -31,11 +31,13 @@ void config_default()
 		strncpy(proc_list[i].ipv4, "127.0.0.1", 16);
 		proc_list[i].port = 1400 + i;
 	}
-	sprintf(log_fname, "process_%d.log", id);
+	sprintf(log_fname, "process_%d_log.txt", id);
 }
 
 void config_get_from_file(const char *filename)
 {
+	int logdef = 0;
+	int prtdef = 0;
 	FILE *fp = fopen(filename, "r");
 	if (fp == NULL) {
 		logs_errexit("Cannot open config file.");
@@ -49,8 +51,10 @@ void config_get_from_file(const char *filename)
 		}
 		if ((oc = strstr(line, "id:")) != NULL) {
 			sscanf(line + 3, "%d", &id);
-			lport += id;
-			sprintf(log_fname, "process_%d.log", id);
+			if (!prtdef)
+				lport += id;
+			if (!logdef)
+				sprintf(log_fname, "process_%d_log.txt", id);
 		}
 		if ((oc = strstr(line, "nmsg:")) != NULL) {
 			sscanf(line + 5, "%d", &nmsg);
@@ -62,9 +66,11 @@ void config_get_from_file(const char *filename)
 			sscanf(line + 5, "%d", &rmax);
 		}
 		if ((oc = strstr(line, "lport:")) != NULL) {
+			logdef = 1;
 			sscanf(line + 6, "%d", &lport);
 		}
 		if ((oc = strstr(line, "log:")) != NULL) {
+			prtdef = 1;
 			char *nl = strrchr(line, '\n');
 			if (nl) {
 				strncpy(log_fname, line + 4, nl - line - 4);

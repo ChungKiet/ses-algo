@@ -44,7 +44,7 @@ static struct sockaddr_in addr;
 static waitbuf_t *wait = NULL;
 
 void ses_accept();
-void check_buffer();
+int check_buffer(int lvl);
 
 void ses_init()
 {
@@ -91,6 +91,8 @@ void ses_loop()
 			if (client_sock[i] > maxfd)
 				maxfd = client_sock[i];
 		}
+		int lvl = 0;
+		check_buffer(++lvl);
 		/* wait for activities from fd */
 		int act = select(maxfd + 1, &readfds, NULL, NULL, NULL);
 		if (act < 0 && errno != EINTR) {
@@ -231,10 +233,11 @@ void ses_accept()
 		pthread_rwlock_unlock(&lock_time);
 
 		/* log and console output */
-		logs_delivered(sender, msg, 0);
+		logs_delivered(sender, msg, 0, 0, timestamp);
 		term_delivered(sender, msg, 0);
 
-		check_buffer();
+		int lvl = 0;
+		while (check_buffer(++lvl));
 	}
 	else { /* sv_search != NULL, compare to check */
 		pthread_rwlock_rdlock(&lock_time);
@@ -268,10 +271,11 @@ void ses_accept()
 			pthread_rwlock_unlock(&lock_time);
 
 			/* log and console output */
-			logs_delivered(sender, msg, 0);
+			logs_delivered(sender, msg, 0, 0, timestamp);
 			term_delivered(sender, msg, 0);
 
-			check_buffer();
+			int lvl = 0;
+			while (check_buffer(++lvl));
 		}
 		else { /* delay */
 			waitbuf_t *new_node = (waitbuf_t *)malloc(sizeof(waitbuf_t));
@@ -286,16 +290,18 @@ void ses_accept()
 			new_node->next = wait;
 			wait           = new_node;
 
-			logs_delayed(sender);
+			logs_delayed(sender, timestamp);
 			term_delayed(sender);
 
-			check_buffer();
+			int lvl = 0;
+			while (check_buffer(++lvl));
 		}
 	}
 }
 
-void check_buffer()
+int check_buffer(int lvl)
 {
+	int something_delivered = 0;
 	waitbuf_t *prev = NULL;
 	waitbuf_t *node = wait;
 	while (node) {
@@ -339,8 +345,10 @@ void check_buffer()
 				pthread_rwlock_unlock(&lock_time);
 
 				/* log and console output */
-				logs_delivered(node->sender, node->msg, 1);
+				logs_delivered(node->sender, node->msg, 1, lvl, node->timestamp);
 				term_delivered(node->sender, node->msg, 1);
+
+				something_delivered = 1;
 
 				free(node->msg);
 				free(node->timestamp);
@@ -362,4 +370,5 @@ void check_buffer()
 			}
 		}
 	}
+	return something_delivered;
 }

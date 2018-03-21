@@ -11,7 +11,8 @@ CC     = gcc
 INCDIR = ./include/
 OBJDIR = ./obj/
 INCOPT = -I./include
-CFLAGS = $(INCOPT) -g -D _TEST_DELAY_MESSAGE_
+LFLAGS = -lpthread
+
 ifeq ($(delay), true)
 ifeq ($(debug), true)
 CFLAGS = $(INCOPT) -g -D _TEST_DELAY_MESSAGE_
@@ -25,7 +26,6 @@ else
 CFLAGS = $(INCOPT)
 endif
 endif
-LFLAGS = -lpthread
 
 .PHONY: all clean makeobjdir
 all: makeobjdir main.o \
@@ -49,7 +49,7 @@ threads.o: threads.c $(INCDIR)defs.h $(INCDIR)threads.h \
 	sentvec.o timevec.o logs.o
 	$(CC) $(CFLAGS) -c threads.c -o $(OBJDIR)threads.o
 
-logs.o: logs.c $(INCDIR)defs.h $(INCDIR)logs.h
+logs.o: logs.c $(INCDIR)defs.h $(INCDIR)logs.h timevec.o sentvec.o
 	$(CC) $(CFLAGS) -c logs.c -o $(OBJDIR)logs.o
 
 config.o: config.c $(INCDIR)defs.h $(INCDIR)config.h logs.o
