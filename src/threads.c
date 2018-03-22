@@ -19,6 +19,7 @@
 #include <pthread.h>
 #include <time.h>
 #include <string.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
@@ -186,6 +187,7 @@ void nodelay_send(int sockfd, char *buf, int msg_len)
 	/* shutdown connection */
 	free(buf);
 	shutdown(sockfd, SHUT_RDWR);
+	close(sockfd);
 }
 
 void *delayed_send(void *args)
@@ -203,5 +205,6 @@ void *delayed_send(void *args)
 	/* shutdown connection */
 	free(arg->buf);
 	shutdown(arg->sockfd, SHUT_RDWR);
+	close(arg->sockfd);
 	pthread_exit(NULL);
 }

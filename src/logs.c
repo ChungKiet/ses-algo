@@ -75,8 +75,7 @@ void logs_errexit(const char *reason)
 
 void term_delayed(int proc)
 {
-	fprintf(stdout, "Received a message from process #%d.\n", proc);
-	fprintf(stdout, "----DELAYED, message is now in buffer.\n");
+	fprintf(stdout, "BUFFER a message from #%d.\n", proc);
 }
 
 void logs_delayed(int proc, timevec_t *ts)
@@ -104,12 +103,10 @@ void term_delivered(int proc, const char *msg, int type)
 	}
 
 	if (type == 0) { /* new message */
-		fprintf(stdout, "Received a message from process #%d.\n", proc);
-		fprintf(stdout, "----DELIVERED immediately! Content: %s\n", msg);
+		fprintf(stdout, "DELIVERY immediately! Sender: #%d. Content: %s\n", proc, msg);
 	}
 	else { /* from buffer */
-		fprintf(stdout, "++++DELIVERED a message of process #%d", proc);
-		fprintf(stdout, " from buffer. Content: %s\n", msg);
+		fprintf(stdout, "++++DELIVERY from buffer. Sender: #%d. Content: %s\n", proc, msg);
 	}
 }
 

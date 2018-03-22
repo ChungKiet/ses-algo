@@ -1,0 +1,210 @@
+LOGS file of process #1
+~~~~
+
+# Clock     : {0, 2}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {2, 0}
+
+# Clock     : {0, 2}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {1, 0}
+# Content   : Message 1 of process 0.
+---># Clock     : {1, 3}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {2, 0}
+    # Content   : Message 2 of process 0.
+
+# Clock     : {2, 5}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {6, 2}
+
+# Clock     : {2, 6}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {5, 2}
+# Content   : Message 3 of process 0.
+---># Clock     : {5, 7}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {6, 2}
+    # Content   : Message 4 of process 0.
+
+# Clock     : {6, 9}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {9, 6}
+# Content   : Message 5 of process 0.
+
+# Clock     : {9, 12}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {12, 9}
+
+# Clock     : {9, 12}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {11, 9}
+# Content   : Message 6 of process 0.
+---># Clock     : {11, 13}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {12, 9}
+    # Content   : Message 7 of process 0.
+
+# Clock     : {12, 15}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {15, 12}
+# Content   : Message 8 of process 0.
+
+# Clock     : {15, 17}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {17, 15}
+# Content   : Message 9 of process 0.
+
+# Clock     : {17, 19}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {18, 15}
+# Content   : Message 10 of process 0.
+
+# Clock     : {18, 20}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {21, 19}
+# Content   : Message 11 of process 0.
+
+# Clock     : {21, 23}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {23, 22}
+# Content   : Message 12 of process 0.
+
+# Clock     : {23, 25}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {25, 23}
+# Content   : Message 13 of process 0.
+
+# Clock     : {25, 27}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {28, 25}
+
+# Clock     : {25, 28}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {26, 23}
+# Content   : Message 14 of process 0.
+---># Clock     : {26, 29}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {28, 25}
+    # Content   : Message 15 of process 0.
+
+# Clock     : {28, 31}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {31, 28}
+# Content   : Message 16 of process 0.
+
+# Clock     : {31, 33}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {33, 31}
+# Content   : Message 17 of process 0.
+
+# Clock     : {33, 36}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {35, 33}
+# Content   : Message 18 of process 0.
+
+# Clock     : {35, 37}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {36, 33}
+# Content   : Message 19 of process 0.
+
+# Clock     : {36, 40}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {40, 36}
+
+# Clock     : {36, 40}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {38, 35}
+# Content   : Message 20 of process 0.
+---># Clock     : {38, 41}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {40, 36}
+    # Content   : Message 21 of process 0.
+
+# Clock     : {40, 43}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {44, 40}
+
+# Clock     : {40, 44}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {43, 40}
+# Content   : Message 22 of process 0.
+---># Clock     : {43, 45}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {44, 40}
+    # Content   : Message 23 of process 0.
+
+# Clock     : {44, 47}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {47, 44}
+# Content   : Message 24 of process 0.
+
+# Clock     : {47, 50}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {48, 44}
+# Content   : Message 25 of process 0.
+
+# Clock     : {48, 51}
+# Event     : Received a message. DELAYED! Message is now in buffer.
+# Sender    : Process #0
+# Timestamp : {52, 49}
+
+# Clock     : {48, 52}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {50, 47}
+# Content   : Message 26 of process 0.
+---># Clock     : {50, 53}
+    # Event     : DELIVERED a message from buffer.
+    # Sender    : Process #0
+    # Timestamp : {52, 49}
+    # Content   : Message 27 of process 0.
+
+# Clock     : {52, 55}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {55, 52}
+# Content   : Message 28 of process 0.
+
+# Clock     : {55, 57}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {56, 52}
+# Content   : Message 29 of process 0.
+
+# Clock     : {56, 60}
+# Event     : Received a message. DELIVERED immediately!
+# Sender    : Process #0
+# Timestamp : {59, 57}
+# Content   : Message 30 of process 0.

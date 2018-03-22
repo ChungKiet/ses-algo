@@ -16,6 +16,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <pthread.h>
+#include <setjmp.h>
+#include <signal.h>
 
 int           n;  /* number of processes in system */
 int           id; /* index of current process */
@@ -35,6 +37,12 @@ pthread_rwlock_t lock_vect = PTHREAD_RWLOCK_INITIALIZER;
 pthread_rwlock_t lock_time = PTHREAD_RWLOCK_INITIALIZER;
 pthread_mutex_t  lock_log  = PTHREAD_MUTEX_INITIALIZER;
 
+static sigjmp_buf env;
+void new_handler(int sig)
+{
+	siglongjmp(env, 1);
+}
+
 int main(int argc, char **argv)
 {
 	config_default();
@@ -44,10 +52,21 @@ int main(int argc, char **argv)
 	/* Initialize SES enviroments and setting up listen socket */
 	ses_init();
 
+	int no_signal = 1;
+	void (*old_handler)(int);
+	if (sigsetjmp(env, 1) == 0) {
+		old_handler = signal(SIGUSR1, &new_handler);
+	}
+	else {
+		no_signal = 0;
+		signal(SIGUSR1, old_handler);
+	}
+
 	/* wait for user type *start* to begin */
 	char buf[255];
-	while (1) {
-		printf("Type \"start\" to begin: ");
+	if (no_signal)
+		printf("Type \"start\" to begin:\n");
+	while (no_signal) {
 		scanf("%s", buf);
 		if (strncmp(buf, "start", 5) == 0)
 			break;

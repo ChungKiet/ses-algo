@@ -27,7 +27,7 @@
 #include <netinet/in.h>
 #include <pthread.h>
 
-#define MAX_CLIENTS 32768
+#define MAX_CLIENTS 100000
 #define BUF_SIZE    100000
 
 /* buffer is a linked list */
@@ -48,6 +48,7 @@ int check_buffer(int lvl);
 
 void ses_init()
 {
+	logs_init(log_fname);
 	tv_init(&time_curr, n, 0);
 	sv_init(&vect_curr);
 	servfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -65,7 +66,6 @@ void ses_init()
 		logs_errexit("Cannot listen for upcomming connections.");
 		term_errexit("Cannot listen for upcomming connections.");
 	}
-	logs_init(log_fname);
 }
 
 void ses_loop()
@@ -131,6 +131,7 @@ void ses_loop()
 					ses_accept();
 				}
 				else if (num_recv == 0) { /* connection closed */
+					shutdown(fd, SHUT_RDWR);
 					close(fd);
 					client_sock[i] = 0;
 				}
