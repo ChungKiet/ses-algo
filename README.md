@@ -1,1 +1,1 @@
-Proudest uselessness I created back in college days, of which I spent most of them sleeping and slacking off.
+Proudest uselessness I created back in college days, when I spent most of the time sleeping and slacking off.
