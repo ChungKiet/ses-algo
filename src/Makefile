@@ -1,7 +1,7 @@
 CC     = gcc
-INCDIR = ./include/
+INCDIR = ./header/
 OBJDIR = ./obj/
-INCOPT = -I./include
+INCOPT = -I./header
 LFLAGS = -lpthread
 
 ifeq ($(delay), true)
