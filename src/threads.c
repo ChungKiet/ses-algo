@@ -17,13 +17,6 @@
 
 #define BUF_SIZE 100000
 
-/* In a localhost enviroment messages are sent almost immediately
- * therefore we cannot test the delayed message functionality.
- * In order to test this, for each mes. we create a new thread that wait
- * a random period of time
- * before actually send the message.
- * To active this behavior, define _TEST_DELAY_MESSAGE_ at compile time
- */
 void *delayed_send(void *args);
 typedef struct {
 	int sockfd;
@@ -63,7 +56,6 @@ void threads_init()
 
 void *start_sender(void *args_addr)
 {
-	/* argument validation */
 	if (args_addr == NULL)
 		return NULL;
 	threadargs_t *args = (threadargs_t *)args_addr;

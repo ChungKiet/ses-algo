@@ -138,7 +138,6 @@ void ses_loop()
 
 void ses_accept()
 {
-	/* get message content */
 	char *tmp = strstr(buf, "\r\n\r\n");
 	if (tmp == NULL) {
 		logs_errexit("Message syntax error.");
@@ -149,13 +148,11 @@ void ses_accept()
 	msg[tmp - buf] = '\0';
 	tmp += 4;
 
-	/* get sender id */
 	char *endptr;
 	int sender;
 	sender = strtol(tmp, &endptr, 0);
 	tmp = endptr;
 
-	/* get message timestamp */
 	vectorclock_t *timestamp = (vectorclock_t *)malloc(sizeof(vectorclock_t));
 	if (timestamp == NULL) {
 		logs_errexit("Cannot allocate memory.");
@@ -173,7 +170,6 @@ void ses_accept()
 		tmp = rslt;
 	}
 
-	/* get sent messages vector of sender process */
 	sentvec_t *vect = (sentvec_t *)malloc(sizeof(sentvec_t));
 	if (vect == NULL) {
 		logs_errexit("Cannot allocate memory.");
@@ -230,7 +226,7 @@ void ses_accept()
 		int lvl = 0;
 		while (check_buffer(++lvl));
 	}
-	else { /* sv_search != NULL, compare to check */
+	else {
 		pthread_rwlock_rdlock(&lock_time);
 		tv_cmp_rslt rs = tv_compare(&time_curr, r);
 		pthread_rwlock_unlock(&lock_time);
@@ -355,7 +351,7 @@ int check_buffer(int lvl)
 					node = prev->next;
 				}
 			}
-			else { /* rs != TV_GREQ, pass */
+			else { 
 				prev = node;
 				node = node->next;
 			}
