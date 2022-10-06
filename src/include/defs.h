@@ -1,13 +1,4 @@
-/*
- * Project 2 - Advanced Operating System
- * CAUSAL MESSAGE ORDERING IN DISTRIBUTED SYSTEM
- * Using Schiper-Eggli-Sandoz Algorithm
- *
- * 1512284 - Ha Tan Linh
- * Email: hatanlinh13@gmail.com
- *
- * Module: Global Definitions
- */
+#pragma once
 #ifndef __DEFS_H__
 #define __DEFS_H__
 
@@ -23,27 +14,21 @@ typedef struct host {
 } host_t;
 
 typedef struct timevec {
-	int  sz; /* size (i.e. number of processes in system) */
+	int  sz;
 	int *vt;
 } timevec_t, vectorclock_t;
 
-/*
- * Sent message vector is implemented as a linked list
- * where each node contains a process identifier
- * and a timestamp vector of lastest message sent by this process
- */
 typedef struct sentnode {
-	int proc; /* process identifier */
+	int proc; 
 	timevec_t timestamp;
 	struct sentnode *next;
 } sentnode_t;
 
 typedef struct sentvec {
 	int size;
-	sentnode_t *root; /* linked list */
+	sentnode_t *root; 
 } sentvec_t;
 
-/* defined in main */
 extern int           n;
 extern int           id;
 extern host_t       *proc_list;

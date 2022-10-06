@@ -1,12 +1,3 @@
-# Project 2 - Advanced Operating System
-# CAUSAL MESSAGE ORDERING IN DISTRIBUTED SYSTEM
-# Using Schiper-Eggli-Sandoz Algorithm
-#
-# 1512284 - Ha Tan Linh
-# Email: hatanlinh13@gmail.com
-#
-# Module: Makefile
-
 CC     = gcc
 INCDIR = ./include/
 OBJDIR = ./obj/
@@ -34,7 +25,7 @@ all: makeobjdir main.o \
 	$(CC) $(LFLAGS) $(OBJDIR)main.o \
 		$(OBJDIR)timevec.o $(OBJDIR)sentvec.o $(OBJDIR)threads.o \
 		$(OBJDIR)logs.o $(OBJDIR)config.o $(OBJDIR)ses.o \
-		-o 1512284
+		-o ses-algo
 
 main.o: main.c $(INCDIR)defs.h config.o threads.o ses.o
 	$(CC) $(CFLAGS) -c main.c -o $(OBJDIR)main.o
@@ -63,4 +54,4 @@ makeobjdir:
 	mkdir -p obj
 
 clean:
-	rm -r ./obj 1512284
+	rm -r ./obj ses-algo

@@ -1,13 +1,3 @@
-/*
- * Project 2 - Advanced Operating System
- * CAUSAL MESSAGE ORDERING IN DISTRIBUTED SYSTEM
- * Using Schiper-Eggli-Sandoz Algorithm
- *
- * 1512284 - Ha Tan Linh
- * Email: hatanlinh13@gmail.com
- *
- * Module: Configuration
- */
 #include "config.h"
 #include "defs.h"
 #include "logs.h"
@@ -25,7 +15,7 @@ void config_default()
 	nmsg  = 150;
 	rmin  = 40;
 	rmax  = 100;
-	lport = 1400;
+	lport = 8081;
 	proc_list = (host_t *)malloc(n * sizeof(host_t));
 	for (int i = 0; i < n; i++) {
 		strncpy(proc_list[i].ipv4, "127.0.0.1", 16);

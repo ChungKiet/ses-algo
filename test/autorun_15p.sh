@@ -6,36 +6,36 @@ if [ "$1" == "" ]; then
 fi
 
 # copy from global config to 15 different config file
-cp global_15p.conf 15p_0.conf
-echo -e "log:logs_15p/process_0_log.txt\nid:0" >> 15p_0.conf
-cp global_15p.conf 15p_1.conf
-echo -e "log:logs_15p/process_1_log.txt\nid:1" >> 15p_1.conf
-cp global_15p.conf 15p_2.conf
-echo -e "log:logs_15p/process_2_log.txt\nid:2" >> 15p_2.conf
-cp global_15p.conf 15p_3.conf
-echo -e "log:logs_15p/process_3_log.txt\nid:3" >> 15p_3.conf
-cp global_15p.conf 15p_4.conf
-echo -e "log:logs_15p/process_4_log.txt\nid:4" >> 15p_4.conf
-cp global_15p.conf 15p_5.conf
-echo -e "log:logs_15p/process_5_log.txt\nid:5" >> 15p_5.conf
-cp global_15p.conf 15p_6.conf
-echo -e "log:logs_15p/process_6_log.txt\nid:6" >> 15p_6.conf
-cp global_15p.conf 15p_7.conf
-echo -e "log:logs_15p/process_7_log.txt\nid:7" >> 15p_7.conf
-cp global_15p.conf 15p_8.conf
-echo -e "log:logs_15p/process_8_log.txt\nid:8" >> 15p_8.conf
-cp global_15p.conf 15p_9.conf
-echo -e "log:logs_15p/process_9_log.txt\nid:9" >> 15p_9.conf
-cp global_15p.conf 15p_10.conf
-echo -e "log:logs_15p/process_10_log.txt\nid:10" >> 15p_10.conf
-cp global_15p.conf 15p_11.conf
-echo -e "log:logs_15p/process_11_log.txt\nid:11" >> 15p_11.conf
-cp global_15p.conf 15p_12.conf
-echo -e "log:logs_15p/process_12_log.txt\nid:12" >> 15p_12.conf
-cp global_15p.conf 15p_13.conf
-echo -e "log:logs_15p/process_13_log.txt\nid:13" >> 15p_13.conf
-cp global_15p.conf 15p_14.conf
-echo -e "log:logs_15p/process_14_log.txt\nid:14" >> 15p_14.conf
+# cp global_15p.conf 15p_0.conf
+# echo -e "log:logs_15p/process_0_log.txt\nid:0" >> 15p_0.conf
+# cp global_15p.conf 15p_1.conf
+# echo -e "log:logs_15p/process_1_log.txt\nid:1" >> 15p_1.conf
+# cp global_15p.conf 15p_2.conf
+# echo -e "log:logs_15p/process_2_log.txt\nid:2" >> 15p_2.conf
+# cp global_15p.conf 15p_3.conf
+# echo -e "log:logs_15p/process_3_log.txt\nid:3" >> 15p_3.conf
+# cp global_15p.conf 15p_4.conf
+# echo -e "log:logs_15p/process_4_log.txt\nid:4" >> 15p_4.conf
+# cp global_15p.conf 15p_5.conf
+# echo -e "log:logs_15p/process_5_log.txt\nid:5" >> 15p_5.conf
+# cp global_15p.conf 15p_6.conf
+# echo -e "log:logs_15p/process_6_log.txt\nid:6" >> 15p_6.conf
+# cp global_15p.conf 15p_7.conf
+# echo -e "log:logs_15p/process_7_log.txt\nid:7" >> 15p_7.conf
+# cp global_15p.conf 15p_8.conf
+# echo -e "log:logs_15p/process_8_log.txt\nid:8" >> 15p_8.conf
+# cp global_15p.conf 15p_9.conf
+# echo -e "log:logs_15p/process_9_log.txt\nid:9" >> 15p_9.conf
+# cp global_15p.conf 15p_10.conf
+# echo -e "log:logs_15p/process_10_log.txt\nid:10" >> 15p_10.conf
+# cp global_15p.conf 15p_11.conf
+# echo -e "log:logs_15p/process_11_log.txt\nid:11" >> 15p_11.conf
+# cp global_15p.conf 15p_12.conf
+# echo -e "log:logs_15p/process_12_log.txt\nid:12" >> 15p_12.conf
+# cp global_15p.conf 15p_13.conf
+# echo -e "log:logs_15p/process_13_log.txt\nid:13" >> 15p_13.conf
+# cp global_15p.conf 15p_14.conf
+# echo -e "log:logs_15p/process_14_log.txt\nid:14" >> 15p_14.conf
 echo "Created temporary config files.\n"
 
 # execute all processes in background
@@ -73,8 +73,8 @@ pid14=$!
 echo "Executed all processes."
 
 # wait for all processes to change signal handler
-echo "Sleep for 2 seconds."
-sleep 2
+echo "Sleep for 15 seconds."
+sleep 15
 
 # notice processes to start
 echo "Sending signals to processes..."
@@ -115,19 +115,19 @@ wait $pid14
 echo "All processes finished."
 
 # remove all temporary config file
-rm 15p_0.conf
-rm 15p_1.conf
-rm 15p_2.conf
-rm 15p_3.conf
-rm 15p_4.conf
-rm 15p_5.conf
-rm 15p_6.conf
-rm 15p_7.conf
-rm 15p_8.conf
-rm 15p_9.conf
-rm 15p_10.conf
-rm 15p_11.conf
-rm 15p_12.conf
-rm 15p_13.conf
-rm 15p_14.conf
+# rm 15p_0.conf
+# rm 15p_1.conf
+# rm 15p_2.conf
+# rm 15p_3.conf
+# rm 15p_4.conf
+# rm 15p_5.conf
+# rm 15p_6.conf
+# rm 15p_7.conf
+# rm 15p_8.conf
+# rm 15p_9.conf
+# rm 15p_10.conf
+# rm 15p_11.conf
+# rm 15p_12.conf
+# rm 15p_13.conf
+# rm 15p_14.conf
 echo "Removed all temporary config files."

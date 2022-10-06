@@ -1,0 +1,5 @@
+LOGS file of process #10
+~~~~
+
+X An error occured: Cannot connect to a socket.
+X Program exited!

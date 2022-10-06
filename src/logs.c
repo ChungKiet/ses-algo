@@ -1,13 +1,3 @@
-/*
- * Project 2 - Advanced Operating System
- * CAUSAL MESSAGE ORDERING IN DISTRIBUTED SYSTEM
- * Using Schiper-Eggli-Sandoz Algorithm
- *
- * 1512284 - Ha Tan Linh
- * Email: hatanlinh13@gmail.com
- *
- * Module: Log Handler
- */
 #include "logs.h"
 #include "defs.h"
 #include "timevec.h"
@@ -21,6 +11,7 @@
 void print_vclock(timevec_t *ts);
 void print_space(int lvl);
 void print_arrow();
+FILE *logfd;
 
 static int fin_count = 0;
 void graceful_exit()
